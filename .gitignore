@@ -1,3 +1,5 @@
 files/
 prompts/
 .DS_Store
+*.docx
+prompt3.txt

@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 from manuscript_reader import ManuscriptReader
 from gpt_api_handler import GPTAPIHandler
 from manuscript_writer import ManuscriptWriter
@@ -9,7 +10,7 @@ def read_prompt_file(prompt_file):
     with open(prompt_file, 'r') as file:
         return file.read()
 
-def main(input_file, output_file, prompt_file):
+def main(input_file, output_file, prompt_file, start_text=None):
     api_key = os.environ.get('OPENAI_API_KEY')
     if not api_key:
         print("Error: OPENAI_API_KEY environment variable not set.")
@@ -19,7 +20,7 @@ def main(input_file, output_file, prompt_file):
     with open(prompt_file, 'r') as file:
         prompt = file.read()
 
-    reader = ManuscriptReader(input_file)
+    reader = ManuscriptReader(input_file, start_text=start_text)
     gpt_api = GPTAPIHandler(prompt, api_key)
     writer = ManuscriptWriter(output_file)
 
@@ -40,11 +41,12 @@ def main(input_file, output_file, prompt_file):
     print(f"Edited manuscript saved to {output_file}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: python3 manuscript_editor.py <input_file> <output_file> <prompt_file>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Manuscript Editor")
+    parser.add_argument("input_file", help="Input manuscript file path")
+    parser.add_argument("output_file", help="Output edited manuscript file path")
+    parser.add_argument("prompt_file", help="Prompt file path")
+    parser.add_argument("--start_text", help="Optional start text to process the input manuscript from", default=None)
 
-    input_file = sys.argv[1]
-    output_file = sys.argv[2]
-    prompt_file = sys.argv[3]
-    main(input_file, output_file, prompt_file)
+    args = parser.parse_args()
+
+    main(args.input_file, args.output_file, args.prompt_file, args.start_text)

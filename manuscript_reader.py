@@ -1,16 +1,17 @@
 import docx
 
 class ManuscriptReader:
-    def __init__(self, file_path, chunk_size=3000):
+    def __init__(self, file_path, start_text=None, chunk_size=3000):
         self.doc = docx.Document(file_path)
+        self.start_text = start_text
         self.chunk_size = chunk_size
 
     def get_chunks(self):
         paragraphs = []
-        start_processing = False
+        start_processing = not bool(self.start_text)
 
         for paragraph in self.doc.paragraphs:
-            if "BOOK 1: THE CAVE" in paragraph.text:
+            if self.start_text and self.start_text in paragraph.text:
                 start_processing = True
 
             if start_processing:
