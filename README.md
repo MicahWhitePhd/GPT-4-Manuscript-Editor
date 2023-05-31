@@ -40,17 +40,17 @@ The code consists of four Python files and one text file:
 3. Run the script with the following command:
 
    ```
-   python3 manuscript_editor.py <input_file> <output_file> <prompt_file> --start_text "TEXT TO START FROM (OPTIONAL)"
+   python3 manuscript_editor.py <input_directory> <output_directory> <prompt_file> --start_text "TEXT TO START FROM (OPTIONAL)"
    ```
 
-   Replace `<input_file>` with the path to the manuscript you want to edit, `<output_file>` with the desired path for the edited manuscript, and `<prompt_file>` with the path to the prompt text file (in this case, `prompt.txt`). Include the optional --start_text parameter if you'd like the editor to start from a specific part in the text
+   Replace `<input_directory>` with the path to the directory with the manuscripts you want to edit, `<output_directory>` with the desired path for the edited manuscripts, and `<prompt_file>` with the path to the prompt text file (in this case, `prompt.txt`). Include the optional --start_text parameter if you'd like the editor to start from a specific part in the text
 
 ## Example
 
-To edit a manuscript called `input_manuscript.docx` and save the edited version as `edited_manuscript.docx`, use the following command:
+To edit a manuscript called `input_manuscript.docx` in the raw/ directory and save the edited version as `edited_manuscript.docx` in the edited/ directory, use the following command:
 
 ```
-python3 manuscript_editor.py input_manuscript.docx edited_manuscript.docx prompt.txt --start_text "Once upon a time"
+python3 manuscript_editor.py raw edited prompt.txt --start_text "Once upon a time"
 ```
 
 ## License

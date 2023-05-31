@@ -1,5 +1,10 @@
 files/
 prompts/
+raw/
+edited/
 .DS_Store
 *.docx
 prompt3.txt
+promptmw.txt
+protest.docx
+temp_output.txt
