@@ -1,10 +1,12 @@
 import os
 import glob
 import sys
+import time
 import argparse
-from manuscript_reader import DocxManuscriptReader, TxtManuscriptReader
+from manuscript_reader import DocxManuscriptReader, TxtManuscriptReader, CsvManuscriptReader
 from manuscript_writer import DocxManuscriptWriter, TxtManuscriptWriter
 from gpt_api_handler import GPTAPIHandler
+from openai.error import RateLimitError  # Import RateLimitError
 
 def read_prompt_file(prompt_file):
     with open(prompt_file, 'r') as file:
@@ -15,6 +17,8 @@ def get_reader(file_path, start_text):
         return DocxManuscriptReader(file_path, start_text=start_text)
     elif file_path.endswith(".txt"):
         return TxtManuscriptReader(file_path, start_text=start_text)
+    elif file_path.endswith(".csv"):
+        return CsvManuscriptReader(file_path, start_text=start_text)
     else:
         raise ValueError(f"Unsupported file type for {file_path}")
 
@@ -23,6 +27,8 @@ def get_writer(file_path):
         return DocxManuscriptWriter(file_path)
     elif file_path.endswith(".txt"):
         return TxtManuscriptWriter(file_path)
+    elif file_path.endswith(".csv"):
+        return TxtManuscriptWriter(file_path)  # Assuming writing CSV as plain text for now
     else:
         raise ValueError(f"Unsupported file type for {file_path}")
 
@@ -53,6 +59,9 @@ def main(input_directory, output_directory, prompt_file, start_text=None):
             elif input_file.lower().endswith(".txt"):
                 reader = TxtManuscriptReader(input_file, start_text=start_text)
                 writer = TxtManuscriptWriter(output_file)
+            elif input_file.lower().endswith(".csv"):
+                reader = CsvManuscriptReader(input_file, start_text=start_text)
+                writer = TxtManuscriptWriter(output_file)
             else:
                 print(f"Skipping file {input_file} with unrecognized extension.")
                 continue
@@ -66,7 +75,16 @@ def main(input_directory, output_directory, prompt_file, start_text=None):
                 print(f"Processing chunk {i+1} of {total_chunks} for file {input_file}")
                 print(f"Sending text to GPT API: {chunk[:100]}...")
 
-                edited_text = gpt_api.get_edited_text(chunk)
+                # Modified part
+                while True:
+                    try:
+                        edited_text = gpt_api.get_edited_text(chunk)
+                        break  # Breaks the loop if the API call was successful
+                    except Exception as e:
+                        print(f"Error occurred: {str(e)}. Retrying after 60 seconds.")
+                        time.sleep(60)  # Wait for 60 seconds before trying again
+
+
 
                 print(f"Received edited text: {edited_text[:100]}...")
 

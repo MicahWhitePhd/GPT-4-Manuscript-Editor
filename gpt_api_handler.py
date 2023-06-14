@@ -7,7 +7,7 @@ class GPTAPIHandler:
 
     def get_edited_text(self, text):
         response = openai.ChatCompletion.create(
-                model="gpt-4",
+                model="gpt-4-0613",
                 messages=[
                     {"role": "system", "content": f"{self.prompt}"},
                     {"role": "user", "content": f"{text}"},
